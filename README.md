@@ -1,5 +1,7 @@
 Hello, this is a repository where I am sharing small Python code examples leveraging Figma's SCIM API. 
 
+One note is the script has the API Token hard coded, the recommendation would be to add the token as an environment variable instead.
+
 DISCLAIMER: 
 
 This software program is provided to you "as is" without any warranty of any kind, either express or implied, including but not limited to the implied warranties of merchantability and fitness for a particular purpose. 
