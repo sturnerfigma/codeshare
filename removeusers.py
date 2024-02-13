@@ -31,7 +31,7 @@ with open('userstoremove.csv', 'r') as userstoremove:
         #below is the binding post request to connect to the existing user
         res = requests.post(GET_USERS_URL, headers= {'Authorization': API_TOKEN, 'Content-Type': 'application/json'}, data = bindjson)
         completedres = res.json()
-        print("We have added the Guest " + completedres["userName"] + " to your SCIM log with a deleted status, this will prevent them from joining your organization.")
+        print("We have added the User " + completedres["userName"] + " to your SCIM log with a deleted status, this will prevent them from joining your organization.")
         
         
     
