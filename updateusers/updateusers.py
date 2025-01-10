@@ -9,12 +9,12 @@ logging.basicConfig(filename='updateusers.log', level=logging.INFO, format='%(as
 
 # Define tenant ID and base URL for the Figma SCIM API
 
-tenant_id = 'insert'
+tenant_id = '964615200748176016'
 baseurl = 'https://www.figma.com/scim/v2/'
 
 
 # Define authorization token
-token = 'Bearer insert'
+token = 'Bearer Aig1OWLmncHUcrdW01ltrNGPARn7sYP7swb3ja+m+8if'
 
 
 # Construct the users endpoint URL
@@ -42,7 +42,9 @@ with open('usertoupdate.csv', 'r') as usertoupdate:
                 resource = completedrequest['Resources'][0]
                 users_url = users_endpoint + "/" + resource['id']
                 print(users_url)
-                logging.info(users_url) #log the users_url
+                print(resource)
+                logging.info(users_url)
+                logging.info(resource) #log the users_url
 
 
                 # Construct the patch dictionary to update user seat type
@@ -64,16 +66,22 @@ with open('usertoupdate.csv', 'r') as usertoupdate:
                     ]
                 }
 
-
-                # Convert the patch dictionary to JSON
+                 # Convert the patch dictionary to JSON
                 patchjson = json.dumps(patchdictionary)
                 # Make a PATCH request to update the user seat type
-                patch_user_seat_status = requests.patch(users_url, headers={'Authorization': token, 'Content-Type': 'application/json'}, data=patchjson)
-                patch_response = patch_user_seat_status.text
-                print('User has been patched, here is the JSON:')
-                logging.info('User has been patched, here is the JSON:')
-                print(patch_response)
-                logging.info(patch_response)
+                patch_attributes = requests.patch(users_url, headers={'Authorization': token, 'Content-Type': 'application/json'}, data=patchjson)
+                
+                # Check for status code 422
+                if patch_attributes.status_code == 422:
+                    print('Error: Received status code 422')
+                    logging.error('Error: Received status code 422, which means the attributes are not present for this user')
+                else:
+                    patch_response = patch_attributes.text
+                    print('User has been patched, here is the JSON:')
+                    logging.info('User has been patched, here is the JSON:')
+                    print(patch_response)
+                    logging.info(patch_response)
+
             else:
                 # Print message if user is not found
                 print(row['email'] + " not found!")
