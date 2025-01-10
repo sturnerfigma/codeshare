@@ -1,15 +1,20 @@
 import csv
 from pip._vendor import requests
 import json
+import logging
+
+# Configure logging
+logging.basicConfig(filename='updateusers.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 # Define tenant ID and base URL for the Figma SCIM API
-tenant_id = 'tenantid'
+
+tenant_id = '964615200748176016'
 baseurl = 'https://www.figma.com/scim/v2/'
 
 
 # Define authorization token
-token = 'Bearer inserttoken'
+token = 'Bearer Aig1OWLmncHUcrdW01ltrNGPARn7sYP7swb3ja+m+8if'
 
 
 # Construct the users endpoint URL
@@ -17,7 +22,7 @@ users_endpoint = baseurl + tenant_id + '/Users'
 
 
 # Open the CSV file containing the users to update
-with open('update_users_with_seat.csv', 'r') as usertoupdate:
+with open('usertoupdate.csv', 'r') as usertoupdate:
     csv_reader = csv.DictReader(usertoupdate)
 
 
@@ -37,18 +42,26 @@ with open('update_users_with_seat.csv', 'r') as usertoupdate:
                 resource = completedrequest['Resources'][0]
                 users_url = users_endpoint + "/" + resource['id']
                 print(users_url)
+                logging.info(users_url) #log the users_url
 
 
                 # Construct the patch dictionary to update user seat type
                 patchdictionary = {
                     "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
-                    "Operations": [{
-                        "op": "remove",
-                        "path": "title",
-                        #comment or uncomment the below value attribute to read from csv or set to manage in Figma "null" value
-                        #"value": row['seat_type']
-                        #"value": "null"
-                    }]
+                   "Operations": [
+                        {
+                            "op": "remove",
+                            "path": "title"
+                        },
+                        {
+                            "op": "remove",
+                            "path": "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department"
+                        },
+                        {
+                            "op": "remove",
+                            "path": "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:employeeNumber"
+                        }
+                    ]
                 }
 
 
@@ -58,10 +71,14 @@ with open('update_users_with_seat.csv', 'r') as usertoupdate:
                 patch_user_seat_status = requests.patch(users_url, headers={'Authorization': token, 'Content-Type': 'application/json'}, data=patchjson)
                 patch_response = patch_user_seat_status.text
                 print('User has been patched, here is the JSON:')
+                logging.info('User has been patched, here is the JSON:')
                 print(patch_response)
+                logging.info(patch_response)
             else:
                 # Print message if user is not found
                 print(row['email'] + " not found!")
+                logging.info(row['email'] + " not found!")
         except requests.exceptions.RequestException as e:
             # Print error message if request fails
             print(row['email'] + " not found!", e)
+            logging.error(row['email'] + " not found!", e)
