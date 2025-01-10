@@ -9,12 +9,12 @@ logging.basicConfig(filename='updateusers.log', level=logging.INFO, format='%(as
 
 # Define tenant ID and base URL for the Figma SCIM API
 
-tenant_id = '964615200748176016'
+tenant_id = 'insert tenant'
 baseurl = 'https://www.figma.com/scim/v2/'
 
 
 # Define authorization token
-token = 'Bearer Aig1OWLmncHUcrdW01ltrNGPARn7sYP7swb3ja+m+8if'
+token = 'Bearer insert token'
 
 
 # Construct the users endpoint URL
